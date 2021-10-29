@@ -2,7 +2,7 @@
 ### _C. Wing Ho_
 
 ### Current Status
-    These are working code that can be run locally (only do count for now).
+    These are working code that can be run locally.
 
 ### Design
 - Users send their data to localhost:8000/eye
@@ -11,8 +11,10 @@
 -- localhost:8000/session/count
 -- localhost:8000/category/count
 -- localhost:8000/name/count
+- Specific type of info can be queried (input example : {"category" : "page interaction"})
+-- localhost:8000/report
 -- As a demo for now you can also get a full report of all the data collected :
-localhost:8000/report
+localhost:8000/report/all
 
 - Other implementations not yet included:
 - - "Applications should be recognized as "trusted clients" to "The Eye" - Can add clients' IP address to ALLOWED_HOSTS[] in settings.py
