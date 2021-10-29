@@ -2,16 +2,16 @@
 ### _C. Wing Ho_
 
 ### Current Status
-    These are working code that can be run locally (only stubs for now), I need some clarification before continue.
+    These are working code that can be run locally (only do count for now).
 
 ### Design
 - Users send their data to localhost:8000/eye
 -- data is stored as cache/db/file... (For simplicity I will store them in cache)
-- Users query report by session, category, or time range
-- - localhost:8000/report/session
-- - localhost:8000/report/category
-- - localhost:8000/report/time
-- - As a demo for now you can also get a full report of all the data collected (you can try it) :
+- Users query count by session, category or name
+-- localhost:8000/session/count
+-- localhost:8000/category/count
+-- localhost:8000/name/count
+-- As a demo for now you can also get a full report of all the data collected :
 localhost:8000/report
 
 - Other implementations not yet included:
@@ -21,10 +21,6 @@ localhost:8000/report
 - - "Your models should have proper constraints to avoid race conditions when multiple events are being processed at the same time" - In production multiple instances of Django should really be running in each CPU of a multi-core linux platform (Apache/mod_wsgi can configure that), on top of that the Big IP should do load balancing as well. Multi-threads may be considered, but Django doesn't work too well with multi-threads, it is tricky.
 
 
-### Questions
-- Do you want the counts? For example, if it is by session, the report will look something like this :
-- - Category : "page interaction" counts 98, "form interaction" counts 112 etc...
-- - Name : "cta click" counts 10, pageview : 17 etc...
-- - Events (Category + Name) : "event1" counts xx, "event2" counts yy etc...
-- Not too sure what to do with the data (host, path, element, form etc) in the report
+### Assumptions
+- For each session user sends only one event at a time
 
