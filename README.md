@@ -7,11 +7,20 @@
 ### Design
 - Users send their data to the webserver
       localhost:8000/eye
-> data is stored as cache/db/file... (For simplicity I will store them in cache for now)
+data is stored as cache/db/file... (For simplicity I will store them in cache for now)
+
 - Users can get the whole report (all stored data)
        localhost:8000/report/all
-- Users can request filtered data, for example {“category” : “page interaction”}
+	   
+- Users can request filtered data
        localhost:8000/report
+for example :
+
+|  Type |  Value |
+| ------------ | ------------ |
+| category  |  "Page interaction" |
+|  timestamp |  ["2021-01-01 06:15:27.2","2021-01-01 08:15:27.2" ]|
+
 - Users can query count by session, category or name
 
       localhost:8000/session/count
@@ -32,7 +41,6 @@
 
 ### TODO
 - Add input validation.
-- Query with given time range.
 - Allow users to send multiple events.
 - Write input to file so you don't need to reenter all input again after webserver restart.
 - spawn background job to process data when webserver is not busy and be able to run on demand.

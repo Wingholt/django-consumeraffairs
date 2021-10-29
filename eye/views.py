@@ -3,10 +3,9 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from collections import Counter
+from datetime import datetime as dt
 
 alldata = []  # all users' input in cache
-
-
 
 '''Count class to put into buckets according to key'''
 class Count():
@@ -54,27 +53,47 @@ def name_count(request, format=None):
 
     return Response({report : buckets})    
 
+'''Get report for specific type and value'''
+class Report():
+    def __init__(self, input):
+        self.input = input
+        #self.validate()
 
-alldata =[]
+    def get_report(self):
+
+        input = self.input
+        response = []
+        text = "Nothing found"
+
+        if (len(input) > 0):
+            key, value = list(input.items())[0]
+    
+        '''session_id, category or name'''
+        if (len(input) > 0 and type(value) is str):
+
+            response = [x for x in alldata if x[key] == value]
+
+        '''time range'''
+        if (len(input) > 0 and type(value) is list):
+
+            start_time = dt.strptime(value[0], "%Y-%m-%d %H:%M:%S.%f")
+            end_time = dt.strptime(value[1], "%Y-%m-%d %H:%M:%S.%f")
+            #TODO validate time
+
+            response = [x for x in alldata if 
+                dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f")  >= start_time
+                and dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f") <= end_time]
+
+        if (len(response) > 0) :
+            text = f'The report you requested - {key} of value {value} : '
+
+        return {text : response}
 
 @api_view(['GET', 'POST'])
 def report(request, format=None):
 
-    response = []
-    text = "Nothing found"
-    
-    if (len(request.data) > 0):
-
-        key, value = list(request.data.items())[0]
-
-        response = [x for x in alldata if x[key] == value]
-      
-        if (len(response) > 0) :
-            text = f'The report you requested - {key} of value {value} : '
-
-    return Response({text : response})
-
-
+    response = Report(request.data).get_report()
+    return Response(response)
 
 @api_view(['GET'])
 def report_all_activities(request, format=None):
