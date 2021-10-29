@@ -55,6 +55,63 @@ def name_count(request, format=None):
     return Response({report : buckets})    
 
 
+alldata =[{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "page interaction",
+  "name": "pageview",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/"
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+},
+
+{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "page interaction",
+  "name": "cta click",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/",
+    "element": "chat bubble"
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+},
+
+{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "form interaction",
+  "name": "submit",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/",
+    "form": {
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+}]
+
+@api_view(['GET', 'POST'])
+def report(request, format=None):
+
+    response = []
+    text = "Nothing found"
+    
+    if (len(request.data) > 0):
+
+        key, value = list(request.data.items())[0]
+
+        response = [x for x in alldata if x[key] == value]
+      
+        if (len(response) > 0) :
+            text = f'The report you requested - {key} of value {value} : '
+
+    return Response({text : response})
+
+
+
 @api_view(['GET'])
 def report_all_activities(request, format=None):
 
