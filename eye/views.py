@@ -122,13 +122,25 @@ def report_all_activities(request, format=None):
 def validate(input):
     errmsg = ''
     required_fields = ['session_id', 'category', 'name', 'data', 'timestamp']
-    input = list(input.keys())
-    v = validator.Validator('keys_no_more_no_less',[input, required_fields])
+    keys = list(input.keys())
+
+    v = validator.Validator('keys_no_more_no_less',[keys, required_fields])
     missing_keys, extraneous_keys = v.get_missing_and_extraneous_keys()
     if (len(missing_keys) > 0 ):
         errmsg = f'**Missing required info : {missing_keys}**'
     elif (len(extraneous_keys) > 0 ):
         errmsg = f'**Unrecongized message type : {extraneous_keys}**'  
+
+    v = validator.Validator('timestamp', input['timestamp'])
+    if (v.is_it_valid()): 
+        if (validator.Validator('future', v.get_timestamp_obj()).is_it_future()):
+            errmsg = "**Timestamp cannot be future***"
+    else:
+        errmsg = v.get_error_message()
+        
+
+    '''Future time is not allowed'''
+    #if (validator.Validator('future', )
 
     return errmsg
 
