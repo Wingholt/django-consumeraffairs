@@ -12,7 +12,10 @@ class Validator():
             self._time_validator()
         if (what_to_validate == 'future'):
             self._future_time_validator()
-            
+        if (what_to_validate == 'keys_no_more_no_less'):
+            self.input = data[0]
+            self.required_keys = data[1]
+            self._keys_no_more_no_less()  
 
     def _time_validator(self):
         data = self.data
@@ -30,6 +33,15 @@ class Validator():
             except:
                 self.errmsg = f'**INVALID DATETIME FORMAT - {data}*** '
                 self.errmsg += f'Acceptable format : {valid_time_format_text}'
+
+    def _keys_no_more_no_less(self):
+        input = self.input
+        required_keys = self.required_keys
+        self.missing_keys = [x for x in required_keys if x not in input]
+        self.extraneous_keys = [x for x in input if x not in required_keys]
+
+    def get_missing_and_extraneous_keys(self):
+        return self.missing_keys, self.extraneous_keys
 
     def _future_time_validator(self):
         self.future_or_not = self.data > dt.now()  

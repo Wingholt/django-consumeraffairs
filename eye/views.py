@@ -58,8 +58,7 @@ def name_count(request, format=None):
 class Report():
     def __init__(self, input):
         self.input = input
-        #self.validate()
-
+        
     def get_report(self):
 
         input = self.input
@@ -120,8 +119,18 @@ def report_all_activities(request, format=None):
 
     return Response({"This are all the activities : " : alldata})
 
-def validation(input):
-    pass
+def validate(input):
+    errmsg = ''
+    required_fields = ['session_id', 'category', 'name', 'data', 'timestamp']
+    input = list(input.keys())
+    v = validator.Validator('keys_no_more_no_less',[input, required_fields])
+    missing_keys, extraneous_keys = v.get_missing_and_extraneous_keys()
+    if (len(missing_keys) > 0 ):
+        errmsg = f'**Missing required info : {missing_keys}**'
+    elif (len(extraneous_keys) > 0 ):
+        errmsg = f'**Unrecongized message type : {extraneous_keys}**'  
+
+    return errmsg
 
 '''Collect user's data and save it in cache '''
 def collect_data(data):
@@ -132,11 +141,19 @@ def collect_data(data):
 @api_view(['GET', 'POST'])
 def main(request, format=None):
 
+    err = ''
+
     try:
-        validation(request.data)
-        collect_data(request.data) 
-        response = "We got your data, thank you"
+        err = validate(request.data)
+        if (len(err) == 0):
+            collect_data(request.data) 
+            response = "We got your data, thank you"
+        else:
+            raise Exception(err)
     except:
-        response = "Something wrong..."
+        if (len(err) > 0):
+            response = err
+        else:
+            response = 'Something Wrong'
 
     return Response(response)
