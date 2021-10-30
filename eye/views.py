@@ -1,9 +1,10 @@
-from django.shortcuts import render
+'''Business logics go here'''
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from collections import Counter
 from datetime import datetime as dt
+from eye import validator
 
 alldata = []  # all users' input in cache
 
@@ -30,7 +31,7 @@ class Count():
 @api_view(['GET'])
 def session_count(request, format=None):
     
-    report = "This are counts by session"
+    report = "This are counts by session id"
     buckets = Count('session_id').get_buckets()
 
     return Response({report : buckets})
@@ -63,29 +64,47 @@ class Report():
 
         input = self.input
         response = []
-        text = "Nothing found"
+        text = ""
+        errmsg = ""
 
-        if (len(input) > 0):
+        if (len(input) == 0):
+            text = "Tell us what info you need, {Info Needed : Value}, examples : "
+            response = [{"category" : "form interaction",
+                        "timestamp" : ["2021-01-01 06:15:27.2","2021-01-01 08:15:27.2"]}]
+            return {text : response}
+
+        try:
+
             key, value = list(input.items())[0]
     
-        '''session_id, category or name'''
-        if (len(input) > 0 and type(value) is str):
+            if (type(value) is str):    # session_id, category or name
+                text = "Nothing found"
+                response = [x for x in alldata if x[key] == value]
 
-            response = [x for x in alldata if x[key] == value]
+            elif (type(value) is list): # time range
 
-        '''time range'''
-        if (len(input) > 0 and type(value) is list):
+                for timestamp_to_validate in value:
+                    v = validator.Validator('timestamp', timestamp_to_validate)
+                    if (v.is_it_valid() == False): 
+                        errmsg = v.get_error_message()
+                        raise Exception()
 
-            start_time = dt.strptime(value[0], "%Y-%m-%d %H:%M:%S.%f")
-            end_time = dt.strptime(value[1], "%Y-%m-%d %H:%M:%S.%f")
-            #TODO validate time
+                start_time = dt.strptime(value[0], "%Y-%m-%d %H:%M:%S.%f")
+                end_time = dt.strptime(value[1], "%Y-%m-%d %H:%M:%S.%f")
+                ''' No need to validate these time because already done when users sent them'''
 
-            response = [x for x in alldata if 
-                dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f")  >= start_time
-                and dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f") <= end_time]
+                response = [x for x in alldata if 
+                    dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f")  >= start_time
+                    and dt.strptime(x['timestamp'],"%Y-%m-%d %H:%M:%S.%f") <= end_time]
+            else:
+                errmsg = f"**INVALID INPUT : {input}"
+                raise Exception()
 
-        if (len(response) > 0) :
-            text = f'The report you requested - {key} of value {value} : '
+            if (len(response) > 0) :
+                text = f'The report you requested - {key} of value {value} : '                       
+
+        except:
+            return(errmsg)
 
         return {text : response}
 

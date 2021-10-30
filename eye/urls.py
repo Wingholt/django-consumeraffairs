@@ -3,10 +3,11 @@ from eye import views
 
 urlpatterns = [
     path('eye/', views.main),
-    path('report/all', views.report_all_activities),
-    path('report/session/count', views.session_count),
-    path('report/category/count', views.category_count),
-    path('report/name/count', views.name_count),
     path('report/', views.report),
+    path('report/all', views.report_all_activities),
+    path('count/session', views.session_count),
+    path('count/category', views.category_count),
+    path('count/name', views.name_count),
+
 ]
 

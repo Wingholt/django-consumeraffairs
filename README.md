@@ -23,9 +23,9 @@ for example :
 
 - Users can query count by session, category or name
 
-      localhost:8000/session/count
-      localhost:8000/category/count
-      localhost:8000/name/count
+      localhost:8000/count/session
+      localhost:8000/count/category
+      localhost:8000/count/name
 
 ### Other considertaions
 - "Applications should be recognized as "trusted clients" to "The Eye" - *Can add clients' IP address to ALLOWED_HOSTS[] in settings.py*
