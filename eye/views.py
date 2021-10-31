@@ -131,17 +131,14 @@ def validate(input):
     elif (len(extraneous_keys) > 0 ):
         errmsg = f'**Unrecongized message type : {extraneous_keys}**'  
 
-    v = validator.Validator('timestamp', input['timestamp'])
-    if (v.is_it_valid()): 
-        if (validator.Validator('future', v.get_timestamp_obj()).is_it_future()):
-            errmsg = "**Timestamp cannot be future***"
     else:
-        errmsg = v.get_error_message()
+        v = validator.Validator('timestamp', input['timestamp'])
+        if (v.is_it_valid()): 
+            if (validator.Validator('future', v.get_timestamp_obj()).is_it_future()):
+                errmsg = "**Timestamp cannot be future***"
+        else:
+            errmsg = v.get_error_message()
         
-
-    '''Future time is not allowed'''
-    #if (validator.Validator('future', )
-
     return errmsg
 
 '''Collect user's data and save it in cache '''
@@ -151,17 +148,23 @@ def collect_data(data):
         alldata.append(data)
 
 @api_view(['GET', 'POST'])
-def main(request, format=None):
+def eye(request, format=None):
 
     err = ''
 
     try:
-        err = validate(request.data)
-        if (len(err) == 0):
-            collect_data(request.data) 
-            response = "We got your data, thank you"
+
+        if (len(request.data) > 0):
+
+            err = validate(request.data)
+            if (len(err) == 0):
+                collect_data(request.data) 
+                response = "We got your data, thank you"
+            else:
+                raise Exception(err)
         else:
-            raise Exception(err)
+            response = "Required input fields - 'session id', 'category', 'name', 'data', timestamp'"
+
     except:
         if (len(err) > 0):
             response = err

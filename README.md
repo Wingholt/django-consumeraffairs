@@ -2,7 +2,17 @@
 ### _C. Wing Ho_
 
 ### Current Status
-    These are working code that can be run locally.
+    These are working code that can be run locally, either command line or Docker
+
+- Commandline
+	```
+python manage.py runserver
+```
+- Docker
+	```
+docker build -t consumeraffairs-test .
+docker run -it -p 8000:8000 consumeraffairs-test
+```
 
 ### Design
 - Users send their data to the webserver
@@ -40,8 +50,7 @@ for example :
 
 
 ### TODO
-- Add input validation.
-- Allow users to send multiple events.
+
 - Write input to file so you don't need to reenter all input again after webserver restart.
 - spawn background job to process data when webserver is not busy and be able to run on demand.
 - Convert response to JSON from native Python dictionary.
