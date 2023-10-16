@@ -1,3 +1,4 @@
+
 # cosumeraffairs-test
 ### _C. Wing Ho_
 
@@ -55,3 +56,4 @@ for example :
 - spawn background job to process data when webserver is not busy and be able to run on demand.
 - Convert response to JSON from native Python dictionary.
 - Add model serializer to take advantage of Django Rest Framework.
+
